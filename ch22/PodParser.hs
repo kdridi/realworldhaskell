@@ -5,6 +5,7 @@ import PodTypes
 import Text.XML.HaXml
 import Text.XML.HaXml.Parse
 import Text.XML.HaXml.Html.Generate(showattr)
+import Text.XML.HaXml.Posn
 import Data.Char
 import Data.List
 
@@ -35,8 +36,8 @@ parse content name =
     where parseResult = xmlParse name (stripUnicodeBOM content)
           doc = getContent parseResult
 
-          getContent :: Document -> Content
-          getContent (Document _ _ e _) = CElem e
+          getContent :: Document Posn -> Content Posn
+          getContent (Document _ _ e _) = CElem e noPos
           
           {- | Some Unicode documents begin with a binary sequence;
              strip it off before processing. -}
@@ -50,36 +51,36 @@ Note that HaXml defines CFilter as:
 
 > type CFilter = Content -> [Content]
 -}
-channel :: CFilter
+channel :: CFilter i
 channel = tag "rss" /> tag "channel"
 
-getTitle :: Content -> String
+getTitle :: Content Posn -> String
 getTitle doc =
     contentToStringDefault "Untitled Podcast" 
         (channel /> tag "title" /> txt $ doc)
 
-getEnclosures :: Content -> [PodItem]
+getEnclosures :: Content Posn -> [PodItem]
 getEnclosures doc =
     concatMap procPodItem $ getPodItems doc
-    where procPodItem :: Content -> [PodItem]
+    where procPodItem :: Content Posn -> [PodItem]
           procPodItem item = concatMap (procEnclosure title) enclosure
               where title = contentToStringDefault "Untitled Episode"
                                (keep /> tag "title" /> txt $ item)
                     enclosure = (keep /> tag "enclosure") item
 
-          getPodItems :: CFilter
+          getPodItems :: CFilter i
           getPodItems = channel /> tag "item"
 
-          procEnclosure :: String -> Content -> [PodItem]
+          procEnclosure :: String -> Content Posn -> [PodItem]
           procEnclosure title enclosure =
               map makePodItem (showattr "url" enclosure)
-              where makePodItem :: Content -> PodItem
+              where makePodItem :: Content Posn -> PodItem
                     makePodItem x = PodItem {itemtitle = title,
                                        enclosureurl = contentToString [x]}
 
 {- | Convert [Content] to a printable String, with a default if the 
 passed-in [Content] is [], signifying a lack of a match. -}
-contentToStringDefault :: String -> [Content] -> String
+contentToStringDefault :: String -> [Content Posn] -> String
 contentToStringDefault msg [] = msg
 contentToStringDefault _ x = contentToString x
 
@@ -92,15 +93,15 @@ An implementation without unescaping would simply be:
 Because HaXml's unescaping only works on Elements, we must make sure that
 whatever Content we have is wrapped in an Element, then use txt to
 pull the insides back out. -}
-contentToString :: [Content] -> String
+contentToString :: [Content Posn] -> String
 contentToString = 
     concatMap procContent
-    where procContent x = 
-              verbatim $ keep /> txt $ CElem (unesc (fakeElem x))
+    where procContent :: Content Posn -> String
+          procContent x = verbatim $ keep /> txt $ CElem (unesc (fakeElem x)) noPos
 
-          fakeElem :: Content -> Element
-          fakeElem x = Elem "fake" [] [x]
+          fakeElem :: Content i -> Element i
+          fakeElem x = Elem (N "fake") [] [x]
 
-          unesc :: Element -> Element
+          unesc :: Element i -> Element i
           unesc = xmlUnEscape stdXmlEscaper
 {-- /snippet all --}
