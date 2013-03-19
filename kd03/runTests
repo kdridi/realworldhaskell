@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)
+
+clear
+cabal configure --enable-tests && cabal build && dist/build/Main/Main 

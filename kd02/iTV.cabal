@@ -1,8 +1,8 @@
-Name: canalplus
+Name: iTV
 Version: 1.0.0
 Build-type: Simple
 Build-Depends: HTTP, HaXml, network, base
 
-Executable: canalplus
-Main-Is: Main.hs
+Executable: iTV
+Main-Is: Sample.hs
 GHC-Options: -O2 -W

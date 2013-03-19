@@ -1,0 +1,65 @@
+Name:               iTV
+Version:            0.0.1
+License:            BSD3
+License-file:       LICENSE.txt
+Copyright:          Karim DRIDI, 2013
+Author:             Karim DRIDI
+Maintainer:         karim.dridi@gmail.com
+Stability:          Download Manager, Network
+Cabal-version:      >= 1.10
+Build-type:         Simple
+Synopsis:           Fetch TV shows on Internet
+Description:        This tool downloads TV shows on Internet.
+Extra-source-files: README.txt
+tested-with:        GHC==7.4.2
+
+
+executable iTV
+  if impl(ghc >= 7.0.0)
+    default-language: Haskell2010
+
+  build-depends:      base >= 4 && < 5
+  build-depends:      QuickCheck >= 2.5
+  build-depends:      data-aviary >= 0.2
+  build-depends:      iTV == 0.0.1
+  build-depends:      HaXml >= 1.23
+
+  hs-source-dirs:     src-main
+  ghc-options:        -O2 -Wall
+
+  main-is:            iTV.hs
+
+library
+  if impl(ghc >= 7.0.0)
+    default-language: Haskell2010
+
+  build-depends:      base >= 4 && < 5
+  build-depends:      HaXml >= 1.23
+  build-depends:      data-aviary >= 0.2
+
+  hs-source-dirs:     src
+  ghc-options:        -Wall
+
+  exposed-modules:    Network.ITV.XML
+
+test-suite Main
+  if impl(ghc >= 7.0.0)
+    default-language: Haskell2010
+
+  build-depends:      base >= 4 && < 5
+  build-depends:      HaXml >= 1.23
+  build-depends:      data-aviary >= 0.2
+
+  build-depends:      QuickCheck >= 2.5
+  build-depends:      HUnit >= 1.2 && < 2
+  build-depends:      test-framework >= 0.4.1
+  build-depends:      test-framework-quickcheck2
+  build-depends:      test-framework-hunit
+
+  hs-source-dirs:     src, src/Network, src/Network/ITV, src-tests
+  ghc-options:        -Wall -rtsopts
+
+  main-is:            Main.hs
+
+  type:               exitcode-stdio-1.0
+  x-uses-tf:          true
