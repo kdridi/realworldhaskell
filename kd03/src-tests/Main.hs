@@ -14,7 +14,7 @@ main :: IO ()
 main = defaultMain tests
 
 fakeXML :: [Char] -> [Char] -> [Char]
-fakeXML a b = "<" ++ a ++ ">" ++ b ++ "</" ++ a ++ ">"
+fakeXML a b = if null b then ("<" ++ a ++ "/>") else ("<" ++ a ++ ">" ++ b ++ "</" ++ a ++ ">")
 
 fakeXMLNode :: [Char] -> [Char] -> [Char]
 fakeXMLNode tagName tagIdent = fakeXML tagName ((map toLower tagName) ++ "_" ++ tagIdent )
