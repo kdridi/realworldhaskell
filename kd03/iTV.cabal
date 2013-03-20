@@ -23,6 +23,7 @@ executable iTV
   build-depends:      data-aviary >= 0.2
   build-depends:      iTV == 0.0.1
   build-depends:      HaXml >= 1.23
+  build-depends:      wx >= 0.90
 
   hs-source-dirs:     src-main
   ghc-options:        -O2 -Wall
