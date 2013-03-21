@@ -24,9 +24,12 @@ executable iTV
   build-depends:      iTV == 0.0.1
   build-depends:      HaXml >= 1.23
   build-depends:      wx >= 0.90
+  build-depends:      wxcore >= 0.90
+  build-depends:      filepath >= 1.3
+  build-depends:      directory >= 1.2
 
   hs-source-dirs:     src-main
-  ghc-options:        -O2 -Wall
+  ghc-options:        -O2 -Wall -XFlexibleContexts
 
   main-is:            iTV.hs
 
